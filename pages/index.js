@@ -4,6 +4,8 @@ import styles from '../styles/Home.module.css'
 import { useEffect, useState } from "react";
 
 export default function Home() {
+    const [err, setError] = useState(false);
+    const [errMessage, setErrorMessage] = useState('');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [todo, setTodo] = useState("");
@@ -12,12 +14,27 @@ export default function Home() {
     }
 
     let addTodo = (event) => {
+        let responseNotOK = false;
+
         setLoading(true)
         event.preventDefault();
         fetch('/api/add?todo=' + todo)
-            .then(res => res.json())
-            .then(_ => {
+            .then(res => {
+                if (res.status === 400) {
+                    responseNotOK = true;
+                }
+
+                return res.json()
+            })
+            .then(data => {
+                if (responseNotOK) {
+                    throw data.message
+                }
+
+                console.log(data)
                 loadTodos()
+            }).catch(error => {
+                loadTodos(error)
             })
     }
 
@@ -37,10 +54,17 @@ export default function Home() {
             })
     }
 
-    let loadTodos = () => {
+    let loadTodos = (error) => {
+        setError(false)
+
         fetch('/api/list')
             .then(res => res.json())
             .then(data => {
+                if (error) {
+                    setError(true)
+                    setErrorMessage(error)
+                }
+
                 setData(data)
                 setLoading(false)
             })
@@ -70,6 +94,17 @@ export default function Home() {
                         <br />
                     </h1>
                     <br />
+
+                    <div>
+                        {
+                            err ?
+                                <p>
+                                    {errMessage}
+                                </p>
+                                :
+                                <br />
+                        }
+                    </div>
                     <a className="clear-cta" href="#" onClick={() => clearTodo()}>
                         Clear
                     </a>
