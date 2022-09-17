@@ -98,7 +98,7 @@ export default function Home() {
                     <div>
                         {
                             err ?
-                                <p>
+                                <p className="error-msg">
                                     {errMessage}
                                 </p>
                                 :

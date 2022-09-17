@@ -4,7 +4,8 @@ const { test, expect } = require("playwright-test-coverage");
 const TODO_ITEMS = [
   'buy some cheese',
   'feed the cat',
-  'book a doctors appointment'
+  'book a doctors appointment',
+  'drink enough water damn it!'
 ];
 
 test.beforeEach(async ({ page }) => {
@@ -34,6 +35,23 @@ test('add a todo item', async ({ page }) => {
   // Make sure the list only has one todo item.
   await expect(page.locator('.Home_card__2SdtB').first()).toHaveText([
     todoName
+  ]);
+});
+
+test('fail to add todo item that includes a forbidden word', async ({ page }) => {
+  // The fourth item in this array includes a forbidden word.
+  let todoName = TODO_ITEMS[3];
+
+  // Text input
+  await page.locator('#todo').fill(todoName);
+  await page.locator('#todo').press('Enter');
+
+  await expect(page.locator('.Home_card__2SdtB').first()).not.toHaveText([
+    todoName
+  ]);
+
+  await expect(page.locator('.error-msg').first()).toHaveText([
+    'Todo input has a forbidden word!'
   ]);
 });
 

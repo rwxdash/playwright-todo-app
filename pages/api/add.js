@@ -19,7 +19,7 @@ export default async (req, res) => {
     return res.status(200).json(data);
 }
 
-function profanityCheck(params) {
+function profanityCheck(item) {
     const wordList = [
         'bullshit',
         'damn',
@@ -29,5 +29,5 @@ function profanityCheck(params) {
         'shit'
     ]
 
-    return wordList.some(v => params.includes(v))
+    return wordList.some(v => item.includes(v))
 }
