@@ -131,3 +131,36 @@ test('clear two todos', async ({ page }) => {
 
   expect(finalCount).toBe(0);
 })
+
+test('fail to add todo item that includes a forbidden word', async ({ page }) => {
+  // The fourth item in this array includes a forbidden word.
+  let todoName = TODO_ITEMS[3];
+
+  // Text input
+  await page.locator('#todo').fill(todoName);
+  await page.locator('#todo').press('Enter');
+
+  await expect(page.locator('.Home_card__2SdtB').first()).not.toHaveText([
+    todoName
+  ]);
+
+  await expect(page.locator('.error-msg').first()).toHaveText([
+    'Todo input has a forbidden word!'
+  ]);
+});
+
+test('fail to add empty input', async ({ page }) => {
+  let todoName = '';
+
+  // Text input
+  await page.locator('#todo').fill(todoName);
+  await page.locator('#todo').press('Enter');
+
+  await expect(page.locator('.Home_card__2SdtB').first()).not.toHaveText([
+    todoName
+  ]);
+
+  await expect(page.locator('.error-msg').first()).toHaveText([
+    'Todo parameter required!'
+  ]);
+});
