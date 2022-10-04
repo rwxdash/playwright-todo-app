@@ -7,7 +7,7 @@ const redis = new Redis({
 
 export default async (req, res) => {
     if (!req.query.todo) {
-        return res.status(400).send("todo parameter required.")
+        return res.status(400).json({ message: 'Todo parameter required!' })
     }
     let todo = encodeURIComponent(req.query.todo)
 
